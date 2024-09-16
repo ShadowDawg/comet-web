@@ -12,6 +12,7 @@ import {
   updateDoc,
   arrayUnion,
   deleteDoc,
+  setDoc,
 } from "firebase/firestore";
 import app, { db } from "@/app/firebase-config";
 import { FriendData } from "./types/friendData";
@@ -53,6 +54,8 @@ export async function getFriendsData(userId: string): Promise<FriendData[]> {
   }
 }
 
+import { FirebaseError } from 'firebase/app';
+
 export async function addFriend(uid: string, phoneNumber: string) {
   const usersRef = collection(db, "users");
   const q = query(usersRef, where("phoneNumber", "==", `+91${phoneNumber}`));
@@ -73,9 +76,24 @@ export async function addFriend(uid: string, phoneNumber: string) {
   };
 
   const userRef = doc(db, "friends", uid);
-  await updateDoc(userRef, {
-    friends: arrayUnion(friendInfo),
-  });
+  
+  try {
+    // Try to update the existing document
+    await updateDoc(userRef, {
+      friends: arrayUnion(friendInfo),
+    });
+  } catch (error: unknown) {
+    // Check if the error is a FirebaseError and has a 'code' property
+    if (error instanceof FirebaseError && error.code === 'not-found') {
+      // If the document doesn't exist, create it
+      await setDoc(userRef, {
+        friends: [friendInfo],
+      });
+    } else {
+      // If it's a different error, rethrow it
+      throw error;
+    }
+  }
 
   return friendInfo;
 }

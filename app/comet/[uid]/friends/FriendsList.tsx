@@ -274,7 +274,7 @@ export function FriendsList({ uid }: FriendsListProps) {
                                 </div>
                               ) : (
                                 <p className="italic text-gray-500">
-                                  {`${friend.name} hasn&apos;t been matched yet.`}
+                                  {`${friend.name} hasn't been matched yet.`}
                                 </p>
                               )}
                             </div>

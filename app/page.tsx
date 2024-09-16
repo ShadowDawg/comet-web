@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -7,6 +8,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"
 import app from "./firebase-config"
 import { useState } from "react"
+import { Loader2 } from "lucide-react"
 
 const whitelistedEmails = [
   'shadowpenguin2004@gmail.com',
@@ -19,8 +21,11 @@ export default function LandingPage() {
   const auth = getAuth(app)
   const db = getFirestore(app)
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSignIn = async () => {
+    setIsLoading(true)
+    setError(null)
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({
@@ -34,6 +39,8 @@ export default function LandingPage() {
       console.log("Firebase user:", user);
 
       if (!user.email || (!user.email.endsWith('@smail.iitm.ac.in') && !whitelistedEmails.includes(user.email))) {
+        // throw new Error('Invalid email domain or email not whitelisted')
+        setError('Please sign in with your IIT Madras smail to continue :)')
         throw new Error('Invalid email domain or email not whitelisted')
       }
 
@@ -55,11 +62,6 @@ export default function LandingPage() {
       const userDoc = await getDoc(userDocRef)
 
       if (!userDoc.exists()) {
-        await setDoc(userDocRef, {
-          email: user.email,
-          name: user.displayName,
-          createdAt: new Date(),
-        })
         router.push('/signup')
       } else {
         router.push(`/comet/${user.uid}`)
@@ -67,13 +69,42 @@ export default function LandingPage() {
     } catch (error) {
       console.error('Error signing in:', error)
       setError('An error occurred during sign-in. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <Button onClick={handleSignIn}>Sign in with Google</Button>
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+    <div className="flex min-h-screen">
+      <div className="hidden md:block md:w-1/2 relative">
+        <Image
+          src="/land.jpg"
+          alt="Landing page image"
+          layout="fill"
+          objectFit="cover"
+        />
+      </div>
+      <div className="w-full md:w-1/2 bg-black flex flex-col items-center justify-center p-8">
+        <h1 className="text-6xl md:text-8xl font-bold text-yellow-400 mb-4 font-playwrite">comet.</h1>
+        <p className="text-white text-lg md:text-xl mb-8 text-center max-w-md">
+          Blame the stars and match with someone special at insti every week.
+        </p>
+        <Button 
+          onClick={handleSignIn} 
+          className="bg-white text-black hover:bg-gray-200"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Signing In...
+            </>
+          ) : (
+            'Sign in with Google'
+          )}
+        </Button>
+        {error && <p className="text-red-500 mt-4">{error}</p>}
+      </div>
     </div>
   )
 }

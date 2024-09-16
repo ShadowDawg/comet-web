@@ -32,19 +32,19 @@ async function CometPageContent({ uid }: { uid: string }) {
         <p className="font-lora">{user.astroData.dailyHoroscope}</p>
       </div>
 
-      <div className="bg-yellow-400 rounded-lg shadow-md p-6 max-w-2xl mx-auto">
+      <div className="bg-dark-grey rounded-lg shadow-md p-6 max-w-2xl mx-auto">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <h4 className="font-semibold mb-2 text-black">Do</h4>
-            <ul className="list-disc list-inside text-black">
+            <h4 className="font-semibold mb-2 text-off-white">Do</h4>
+            <ul className="list-disc list-inside text-off-white">
               {user.astroData.actionTable.yes.map((action, index) => (
                 <li key={index} className="mb-1">{action}</li>
               ))}
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-2 text-black">Don&apos;t</h4>
-            <ul className="list-disc list-inside text-black">
+            <h4 className="font-semibold mb-2 text-off-white">Don&apos;t</h4>
+            <ul className="list-disc list-inside text-off-white">
               {user.astroData.actionTable.no.map((action, index) => (
                 <li key={index} className="mb-1">{action}</li>
               ))}
