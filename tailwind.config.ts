@@ -9,6 +9,16 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		animation: {
+			gradient: "gradient 8s linear infinite",
+		},
+		keyframes: {
+			gradient: {
+				to: {
+				backgroundPosition: "var(--bg-size) 0",
+				},
+			},
+		},
   		colors: {
 			'tile': '#292928',
 			'yelloww': '#FFC46E',

@@ -8,15 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { Calendar as CalendarIcon } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -25,6 +16,7 @@ import app from "../firebase-config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 
 const signupSchema = z.object({
   name: z
@@ -48,6 +40,7 @@ const signupSchema = z.object({
   dateOfBirth: z.date(),
   placeOfBirth: z.string().min(1, "Place of birth is required"),
   notificationsEnabled: z.boolean(),
+  profilePhoto: z.instanceof(File, { message: "Profile photo is required" }),
 });
 
 type SignupFormData = z.infer<typeof signupSchema>;
@@ -56,6 +49,7 @@ export default function SignupPage() {
   const router = useRouter();
   const auth = getAuth();
   const storage = getStorage(app);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -64,6 +58,7 @@ export default function SignupPage() {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -84,15 +79,10 @@ export default function SignupPage() {
     setIsLoading(true);
     try {
       let photoUrl = "";
-      if (profilePhoto) {
-        // Upload photo to Firebase Storage and get URL
-        const storageRef = ref(
-          storage,
-          `profile_images/${auth.currentUser.uid}`
-        );
-        await uploadBytes(storageRef, profilePhoto);
-        photoUrl = await getDownloadURL(storageRef);
-      }
+
+      const storageRef = ref(storage, `profile_images/${auth.currentUser.uid}`);
+      await uploadBytes(storageRef, data.profilePhoto);
+      photoUrl = await getDownloadURL(storageRef);
 
       const userData = {
         ...data,
@@ -127,6 +117,7 @@ export default function SignupPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setValue("profilePhoto", file, { shouldValidate: true });
       setProfilePhoto(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -140,7 +131,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2">
-          <div className="text-5xl font-bold text-center font-playwrite">
+          <div className="text-5xl font-bold text-center font-playwrite my-10">
             Take the Leap.
           </div>
           <CardTitle className="text-2xl font-bold text-center">
@@ -205,64 +196,54 @@ export default function SignupPage() {
               />
             </div>
             <div>
-              <Label htmlFor="profilePhoto">Profile Photo</Label>
+              <Label htmlFor="profilePhoto">Profile Photo (required)</Label>
               <Input
                 id="profilePhoto"
                 type="file"
                 onChange={handleFileChange}
                 accept="image/*"
               />
+              {errors.profilePhoto && (
+                <p className="text-red-500">{errors.profilePhoto.message}</p>
+              )}
             </div>
             {previewUrl && (
-                <div className="flex justify-center">
-                  <div className="w-24 h-24 rounded-full overflow-hidden">
-                    <Image
-                      src={previewUrl}
-                      alt="Profile preview"
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+              <div className="flex justify-center">
+                <div className="w-24 h-24 rounded-full overflow-hidden">
+                  <Image
+                    src={previewUrl}
+                    alt="Profile preview"
+                    width={96}
+                    height={96}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              )}
+              </div>
+            )}
             <div>
-              <Label>Date of Birth</Label>
+              <Label className="mxr-2">
+                {"When were your born? We're gonna need the time too :)"}
+              </Label>
               <Controller
                 name="dateOfBirth"
                 control={control}
                 render={({ field }) => (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <DateTimePicker
+                    hourCycle={12}
+                    value={field.value}
+                    onChange={(date: Date | undefined) => field.onChange(date)}
+                  />
                 )}
               />
+              {errors.dateOfBirth && (
+                <p className="text-red-500">{errors.dateOfBirth.message}</p>
+              )}
             </div>
             <div>
-              <Label htmlFor="placeOfBirth">Place of Birth</Label>
+              <Label htmlFor="placeOfBirth">
+                Where were you born? If you type in `&quot;Earth`&quot;, you&apos;re banned from
+                comet.
+              </Label>
               <Controller
                 name="placeOfBirth"
                 control={control}
