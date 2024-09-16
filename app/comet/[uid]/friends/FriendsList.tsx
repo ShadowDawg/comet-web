@@ -199,7 +199,7 @@ export function FriendsList({ uid }: FriendsListProps) {
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </DrawerTrigger>
-                  <DrawerContent>
+                  <DrawerContent className="bg-bg">
                     <div className="mx-auto w-full max-w-sm">
                       <DrawerHeader className="text-center">
                         <div className="flex justify-center mb-4">

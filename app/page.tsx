@@ -100,7 +100,7 @@ export default function LandingPage() {
               Signing In...
             </>
           ) : (
-            'Sign in with Google'
+            'Sign in with smail.'
           )}
         </Button>
         {error && <p className="text-red-500 mt-4">{error}</p>}
