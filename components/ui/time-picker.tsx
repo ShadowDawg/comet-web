@@ -17,7 +17,7 @@ export function TimePicker({ selected, onSelect }: TimePickerProps) {
   const [period, setPeriod] = React.useState(selected ? (parseInt(selected.split(':')[0]) >= 12 ? 'PM' : 'AM') : 'AM')
 
   const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value
+    const value = e.target.value
     if (value === '') {
       setHours(value)
     } else {
@@ -29,7 +29,7 @@ export function TimePicker({ selected, onSelect }: TimePickerProps) {
   }
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value
+    const value = e.target.value
     if (value === '') {
       setMinutes(value)
     } else {
