@@ -16,7 +16,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Switch } from "@/components/ui/switch"
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import app from "../firebase-config"
 

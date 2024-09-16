@@ -26,6 +26,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { UserModel } from "@/lib/types/user";
 
 interface FriendData {
   name: string;
@@ -48,8 +49,8 @@ export function FriendsList({ uid }: FriendsListProps) {
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedFriend, setSelectedFriend] = useState<FriendData | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [friendDetails, setFriendDetails] = useState<any>(null);
-  const [matchData, setMatchData] = useState<any>(null);
+  const [friendDetails, setFriendDetails] = useState<UserModel | null>(null);
+  const [matchData, setMatchData] = useState<UserModel | null>(null);
   const [isLoadingMatch, setIsLoadingMatch] = useState(false);
 
   useEffect(() => {
@@ -127,7 +128,7 @@ export function FriendsList({ uid }: FriendsListProps) {
               <DialogHeader>
                 <DialogTitle>Add a Friend</DialogTitle>
                 <DialogDescription>
-                  Enter your friend's phone number to add them to your friends
+                  Enter your friend&apos;s phone number to add them to your friends
                   list.
                 </DialogDescription>
               </DialogHeader>
@@ -273,7 +274,7 @@ export function FriendsList({ uid }: FriendsListProps) {
                                 </div>
                               ) : (
                                 <p className="italic text-gray-500">
-                                  Your friend hasn't been matched yet.
+                                  {`${friend.name} hasn&apos;t been matched yet.`}
                                 </p>
                               )}
                             </div>
@@ -299,7 +300,7 @@ export function FriendsList({ uid }: FriendsListProps) {
           </div>
         ) : (
           <div className="text-center w-full">
-            <p className="text-gray-500">You haven't added any friends yet.</p>
+            <p className="text-gray-500">You haven&apos;t added any friends yet.</p>
           </div>
         )}
       </div>

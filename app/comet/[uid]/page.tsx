@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { Avatar } from '@/components/ui/avatar';
 import { getUserData } from '@/lib/utils';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { Suspense } from 'react';
 
 function getGreeting(hour: number): string {
@@ -24,7 +24,7 @@ async function CometPageContent({ uid }: { uid: string }) {
   return (
     <>
       <h2 className="text-2xl mb-2 font-playwrite">{greeting}, {user.name}.</h2>
-      <p className="text-sm text-gray-500 mb-4">It's {currentDate}. Today's vibe:</p>
+      <p className="text-sm text-gray-500 mb-4">It&apos;s {currentDate}. Today&apos;s vibe:</p>
       <Avatar className="mx-auto mb-4 w-24 h-24">
         <img src={user.photoUrl || '/api/placeholder/100/100'} alt={user.name} />
       </Avatar>
@@ -43,7 +43,7 @@ async function CometPageContent({ uid }: { uid: string }) {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-2 text-black">Don't</h4>
+            <h4 className="font-semibold mb-2 text-black">Don&apos;t</h4>
             <ul className="list-disc list-inside text-black">
               {user.astroData.actionTable.no.map((action, index) => (
                 <li key={index} className="mb-1">{action}</li>

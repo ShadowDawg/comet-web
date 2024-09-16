@@ -7,7 +7,7 @@ export interface AstroDataModel {
     matchApproved: boolean;
     lastUpdated: string;
     chatRoomId: string;
-    planetSigns: Record<string, any>;
+    planetSigns: Record<string, string>;
     actionTable: {
       yes: string[];
       no: string[];
