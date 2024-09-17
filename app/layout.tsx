@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "./providers";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,7 +36,7 @@ const lora = localFont({
 export const metadata: Metadata = {
   title: "Comet",
   description: "By insti, For insti",
-}
+};
 
 export default function RootLayout({
   children,
@@ -49,6 +50,7 @@ export default function RootLayout({
     >
       <body className={`font-manrope`}>
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );

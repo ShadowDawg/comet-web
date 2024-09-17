@@ -102,7 +102,7 @@ const DATA = {
 
 function DockDemo() {
   return (
-    <div>
+    <div className="mb-4">
       <TooltipProvider>
         <Dock direction="middle">
           {/* {DATA.navbar.map((item) => (
