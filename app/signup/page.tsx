@@ -17,6 +17,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
+import Autocomplete from "react-google-autocomplete";
+
+type GooglePlace = {
+  formatted_address?: string;
+  name?: string;
+  // Add other properties you might need
+};
+
 
 const signupSchema = z.object({
   name: z
@@ -38,7 +46,7 @@ const signupSchema = z.object({
     .regex(/^\d+$/, "Must contain only numbers"),
   gender: z.enum(["male", "female"]),
   dateOfBirth: z.date(),
-  placeOfBirth: z.string().min(1, "Place of birth is required"),
+  placeOfBirth: z.string().min(1, "Place of birth is required").refine(value => value.toLowerCase() !== "earth", {  message: "You're banned from comet if you type 'Earth'",}),
   notificationsEnabled: z.boolean(),
   profilePhoto: z.instanceof(File, { message: "Profile photo is required" }),
 });
@@ -241,13 +249,29 @@ export default function SignupPage() {
             </div>
             <div>
               <Label htmlFor="placeOfBirth">
-                Where were you born? If you type in `&quot;Earth`&quot;, you&apos;re banned from
+                Where were you born? If you type in &quot;Earth&quot;, you&apos;re banned from
                 comet.
               </Label>
               <Controller
                 name="placeOfBirth"
                 control={control}
-                render={({ field }) => <Input {...field} />}
+                render={({ field }) => (
+                  <Autocomplete
+                    apiKey="AIzaSyDzOQdO-3whdfsgMPtAx-Wa4XNlr-iyB9M"
+                    onPlaceSelected={(place: GooglePlace) => {
+                      const formattedAddress = place.formatted_address || place.name;
+                      if (formattedAddress) {
+                        setValue('placeOfBirth', formattedAddress, { shouldValidate: true });
+                      } else {
+                        console.error("Selected place does not have a formatted address or name");
+                        // You might want to set an error state or show a message to the user
+                      }
+                    }}
+                    className="w-full p-2 border rounded-md bg-white text-black"
+                    defaultValue={field.value}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value)}
+                  />
+                )}
               />
               {errors.placeOfBirth && (
                 <p className="text-red-500">{errors.placeOfBirth.message}</p>
