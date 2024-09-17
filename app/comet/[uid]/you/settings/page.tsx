@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getUserData } from "@/lib/utils";
+import { getUserData, updateUserPhoto } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { signOut } from "next-auth/react";
 import { deleteUser } from "@/lib/utils";
-import { UserModel } from "@/lib/types/user"; // Make sure this import path is correct
+import { UserModel } from "@/lib/types/user";
 
 export default function SettingsPage({ params }: { params: { uid: string } }) {
   const router = useRouter();
@@ -23,6 +23,8 @@ export default function SettingsPage({ params }: { params: { uid: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -78,13 +80,49 @@ export default function SettingsPage({ params }: { params: { uid: string } }) {
     }
   };
 
+  const handleChangeProfilePicture = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const updatedUser = await updateUserPhoto(user.uid, file);
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+      // Handle error (e.g., show error message to user)
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 flex flex-col items-center">
       <div className="w-full max-w-md">
-        <Avatar className="h-24 w-24 mx-auto mb-6">
-          <AvatarImage src={user.photoUrl} alt={user.name} />
-          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-        </Avatar>
+        <div className="relative mb-6">
+          <Avatar className="h-24 w-24 mx-auto">
+            <AvatarImage src={user.photoUrl} alt={user.name} />
+            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <Button
+            className="mt-2 w-full"
+            onClick={handleChangeProfilePicture}
+            disabled={isUploading}
+          >
+            {isUploading ? "Uploading..." : "Change profile picture"}
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {userDetails.map((detail, index) => (

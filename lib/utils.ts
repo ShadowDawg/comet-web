@@ -55,6 +55,7 @@ export async function getFriendsData(userId: string): Promise<FriendData[]> {
 }
 
 import { FirebaseError } from 'firebase/app';
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 export async function addFriend(uid: string, phoneNumber: string) {
   const usersRef = collection(db, "users");
@@ -113,4 +114,27 @@ export async function deleteUser(uid: string): Promise<void> {
 
   // Delete the user's authentication account
   await firebaseDeleteUser(auth.currentUser);
+}
+
+export async function updateUserPhoto(uid: string, file: File): Promise<UserModel> {
+  const storage = getStorage();
+  const db = getFirestore();
+
+  // Create a reference to the location you want to upload to in Firebase Storage
+  const storageRef = ref(storage, `profile_images/${uid}`);
+
+  // Upload the file
+  await uploadBytes(storageRef, file);
+
+  // Get the download URL
+  const downloadURL = await getDownloadURL(storageRef);
+
+  // Update the user document in Firestore
+  const userRef = doc(db, "users", uid);
+  await updateDoc(userRef, {
+    photoUrl: downloadURL,
+  });
+
+  // Fetch and return the updated user data
+  return await getUserData(uid);
 }
