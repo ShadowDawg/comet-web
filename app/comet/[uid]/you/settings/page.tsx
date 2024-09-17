@@ -25,6 +25,7 @@ export default function SettingsPage({ params }: { params: { uid: string } }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -71,12 +72,19 @@ export default function SettingsPage({ params }: { params: { uid: string } }) {
   };
 
   const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    setIsDeletingAccount(true);
     try {
       await deleteUser(user.uid);
+      await signOut({ redirect: false });
       router.push("/");
     } catch (error) {
       console.error("Error deleting account:", error);
       // Handle error (e.g., show error message to user)
+    } finally {
+      setIsDeletingAccount(false);
+      setIsDeleteDialogOpen(false);
     }
   };
 
@@ -84,7 +92,9 @@ export default function SettingsPage({ params }: { params: { uid: string } }) {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -191,11 +201,16 @@ export default function SettingsPage({ params }: { params: { uid: string } }) {
             <Button
               variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isDeletingAccount}
             >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDeleteAccount}>
-              Delete Account
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAccount}
+              disabled={isDeletingAccount}
+            >
+              {isDeletingAccount ? "Deleting..." : "Delete Account"}
             </Button>
           </DialogFooter>
         </DialogContent>
