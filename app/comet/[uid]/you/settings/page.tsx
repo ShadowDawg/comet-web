@@ -58,8 +58,8 @@ export default function SettingsPage({ params }: { params: { uid: string } }) {
   });
 
   const userDetails = [
-    { label: user.handle, value: user.name },
-    { label: "Gender", value: "slayyy💅" },
+    { label: `@${user.handle}`, value: user.name },
+    { label: "Gender", value: user.gender === 'male' ? '👨' : '👩' },
     { label: "Phone", value: user.phoneNumber },
     { label: "Birth Date", value: formattedDate },
     { label: "Birth Time", value: formattedTime },
