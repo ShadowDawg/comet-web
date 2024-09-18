@@ -8,7 +8,7 @@ export function NavBar({ uid }: { uid: string }) {
   const pathname = usePathname();
   const pages = ['home', 'friends', 'love', 'you'];
   
-  const currentPage = pathname === `comet/${uid}` ? 'home' : pathname.split('/').pop() || 'home';
+  const currentPage = pathname === `/comet/${uid}` ? 'home' : pathname.split('/').pop() || 'home';
 
   return (
     <nav className="flex justify-center space-x-4 my-4">
@@ -18,8 +18,8 @@ export function NavBar({ uid }: { uid: string }) {
           href={`/comet/${uid}${page === 'home' ? '' : `/${page}`}`}
           className={`px-3 py-2 rounded-md text-sm font-medium ${
             currentPage === page
-              ? 'bg-yellow-400 text-white'
-              : 'text-yellow-400 hover:bg-yellow-100'
+              ? 'bg-yellow-400 text-black'
+              : 'text-white hover:bg-dark-grey'
           }`}
         >
           {page.charAt(0).toUpperCase() + page.slice(1)}
