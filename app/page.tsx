@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Dock, DockIcon } from "@/components/magicui/dock";
-import { UserProfileGridFemale, UserProfileGridMale } from "./userprofile";
+// import { UserProfileGridFemale, UserProfileGridMale } from "./userprofile";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
