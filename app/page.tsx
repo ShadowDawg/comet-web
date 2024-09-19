@@ -242,7 +242,7 @@ export default function LandingPage() {
         </p> */}
         <Button
           onClick={handleSignIn}
-          className="bg-yellow-400 text-black hover:bg-yellow-300 text-lg py-6 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
+          className="bg-yellow-400 text-black hover:bg-yellow-300 text-lg py-6 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 mt-12"
           disabled={isLoading}
         >
           {isLoading ? (
