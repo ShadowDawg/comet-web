@@ -237,9 +237,9 @@ export default function LandingPage() {
         <p className="text-gray-300 text-xl md:text-2xl max-w-2xl mx-auto mt-12">
           Connect, explore, and find your match at insti.
         </p>
-        <p className="text-gray-300 text-sm md:text-xl mb-12 max-w-2xl mx-auto">
+        {/* <p className="text-gray-300 text-sm md:text-xl mb-12 max-w-2xl mx-auto">
           {`(because InstiSpace is a fucking joke)`}
-        </p>
+        </p> */}
         <Button
           onClick={handleSignIn}
           className="bg-yellow-400 text-black hover:bg-yellow-300 text-lg py-6 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
