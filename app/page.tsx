@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Dock, DockIcon } from "@/components/magicui/dock";
+import { UserProfileGridFemale, UserProfileGridMale } from "./userprofile";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -234,7 +235,7 @@ export default function LandingPage() {
           Reimagined.
         </h1>
         <p className="text-gray-300 text-xl md:text-2xl max-w-2xl mx-auto mt-12">
-          Connect, explore, and find your match at IIT Madras.
+          Connect, explore, and find your match at insti.
         </p>
         <p className="text-gray-300 text-sm md:text-xl mb-12 max-w-2xl mx-auto">
           {`(because InstiSpace is a fucking joke)`}
